@@ -3,9 +3,10 @@ const { loginId, transactionKey } = require("../auth-config");
 const ApiContracts = require("authorizenet").APIContracts;
 const ApiControllers = require("authorizenet").APIControllers;
 var utils = require("../utils/auth-utils.js");
+const User = require("../models/User.model");
 
 module.exports = function (app) {
-	app.post("/create-subscription-authorize", (req, res) => {
+	app.post("/create-subscription-authorize", async (req, res) => {
 		var plan = "";
 		if (req.body.planType === "monthly") {
 			plan = 1;
@@ -15,10 +16,10 @@ module.exports = function (app) {
 			plan = 12;
 		}
 		const validationErrors = validateForm(req);
-		// if (validationErrors.length > 0) {
-		//   res.json({ errors: validationErrors });
-		//   return;
-		// }
+		if (validationErrors.length > 0) {
+			res.json({ errors: validationErrors });
+			return;
+		}
 		var merchantAuthenticationType =
 			new ApiContracts.MerchantAuthenticationType();
 		merchantAuthenticationType.setName(loginId);
@@ -30,7 +31,6 @@ module.exports = function (app) {
 		// monthly
 		// lifetime
 		interval.setUnit(ApiContracts.ARBSubscriptionUnitEnum.MONTHS);
-
 		var paymentScheduleType = new ApiContracts.PaymentScheduleType();
 		paymentScheduleType.setInterval(interval);
 		paymentScheduleType.setStartDate(utils.getDate());
@@ -112,12 +112,39 @@ module.exports = function (app) {
 			createRequest.getJSON()
 		);
 
-		ctrl.execute(function () {
+		ctrl.execute(async () => {
 			var apiResponse = ctrl.getResponse();
 
 			var response = new ApiContracts.ARBCreateSubscriptionResponse(
 				apiResponse
 			);
+			try {
+				let newUsr = await User.findOne({
+					email: req.body.email,
+				});
+				if (!newUsr) {
+					console.log("no user found");
+				}
+				newUsr.expirationDate = "NEVER";
+				newUsr.accountActive = true;
+				newUsr.accountVerified = true;
+
+				newUsr
+					.save()
+					.then(async (updatedUser) => {
+						// res.json(updatedUser);
+						console.log("succesfully updated");
+					})
+					.catch((e) => {
+						// res.status(500).send({
+						// 	success: false,
+						// 	message: "There was a problem saving to the database.",
+						// });
+						console.log("error in trycatch user", e);
+					});
+			} catch (ex) {
+				console.log("error in updating user", ex);
+			}
 
 			res.send(JSON.stringify(response, null, 2));
 
@@ -148,6 +175,23 @@ module.exports = function (app) {
 
 			// callback(response);
 		});
+
+		// if (req.body.user) {
+		// 	//update the user's events to reflect the user's lifetime membership
+		// 	const events = await Event.find({ ownerID: user._id });
+		// 	if (events.length > 0) {
+		// 		events.forEach((event) => {
+		// 			event.expirationDate = "never";
+		// 			event.save();
+		// 		});
+		// 	}
+		// 	//set the paymentFailed field to false
+		// 	user.paymentFailed = false;
+		// 	//set the user's plan
+		// 	user.plan = "lifetime";
+		// 	//set the user's expiration date to "never";
+		// 	user.expirationDate = "never";
+		// }
 	});
 	if (require.main === module) {
 		createSubscription(function () {
