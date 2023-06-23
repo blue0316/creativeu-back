@@ -144,7 +144,7 @@ app.get("/*", (req, res) => {
   console.log('try')
   mongoose.connect(
     process.env.NODE_ENV === "development"
-      ? "mongodb://localhost:27017/creativeu_db"
+      ? "mongodb://localhost:27017/creativeu-db"
       : `mongodb+srv://WebifyDev:${process.env.ATLAS_PASSWORD}@creativeucluster.wvuoo.mongodb.net/CreativeU?retryWrites=true&w=majority`
   );
 

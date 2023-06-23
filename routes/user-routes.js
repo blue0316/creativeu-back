@@ -509,6 +509,7 @@ module.exports = function (app, stripe) {
 		"/authenticated_user",
 		passport.authenticate("user", { session: false }),
 		(req, res) => {
+			console.log("dfdfsds", req, "dafdsfasdfadsfasdf", res)
 			if (req.user) {
 				User.findOne({ secretID: req.user.secretID }, function (err, user) {
 					if (err) return next(err);
@@ -669,6 +670,7 @@ module.exports = function (app, stripe) {
 				}
 			);
 		}
+		console.log("req.body.email", req.body.email);
 	});
 
 	//validate profile url
@@ -732,8 +734,10 @@ module.exports = function (app, stripe) {
 				try {
 					const accountLink = await stripe.accountLinks.create({
 						account: req.user.stripeAccountID,
-						refresh_url: "https://creativeu.live/profile",
-						return_url: "https://creativeu.live/profile",
+						refresh_url: "http://localhost:3000/profile",
+						return_url: "http://localhost:3000/profile",
+						// refresh_url: "https://creativeu.live/profile",
+						// return_url: "https://creativeu.live/profile",
 						type: "account_onboarding",
 					});
 					res.send(accountLink.url);

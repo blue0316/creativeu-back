@@ -20,6 +20,7 @@ module.exports = function (app, stripe) {
     passport.authenticate("user", { session: false }),
     (req, res) => {
       if (req.user) {
+        console.log('abcdefg' ,req);
         User.findOne(
           { email: req.user.email, secretID: req.user.secretID },
           async function (err, user) {
@@ -79,6 +80,7 @@ module.exports = function (app, stripe) {
     "/api/media/upload",
     passport.authenticate("user", { session: false }),
     (req, res) => {
+      console.log('amediaupload' ,req);
       if (req.user) {
         User.findOne(
           { email: req.user.email, secretID: req.user.secretID },

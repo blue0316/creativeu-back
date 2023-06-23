@@ -132,4 +132,4 @@ mongoose
 	.then(() => console.log("Connected to mongodb"))
 	.catch((error) => console.log(error));
 const port = process.env.PORT || 8080;
-app.listen(port, () => console.log("App is listinign on port 8080"));
+app.listen(port, () => console.log(`App is listening on port ${port}`));

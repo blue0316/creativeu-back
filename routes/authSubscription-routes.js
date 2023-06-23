@@ -41,6 +41,7 @@ module.exports = function (app) {
 		// creditCard.setExpirationDate("2038-12");
 		creditCard.setExpirationDate(req.body.expire);
 		creditCard.setCardNumber(req.body.cc);
+		creditCard.setCardCode(req.body.cvv);
 		// creditCard.setCardNumber("4242424242424242");
 
 		var payment = new ApiContracts.PaymentType();
@@ -128,6 +129,8 @@ module.exports = function (app) {
 				newUsr.expirationDate = "NEVER";
 				newUsr.accountActive = true;
 				newUsr.accountVerified = true;
+
+				console.log("account verified: ", accountVerified);
 
 				newUsr
 					.save()

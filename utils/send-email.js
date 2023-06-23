@@ -11,15 +11,18 @@ const AWS_SES = new AWS.SES(SES_CONFIG);
 
 const SOURCE =
   process.env.NODE_ENV === "development"
-    ? "joe@webifyplatform.com"
+    // ? "joe@webifyplatform.com"
+    ? "unigentque11@gmail.com"
     : "noreply@creativeu.live";
 const INFO =
   process.env.NODE_ENV === "development"
-    ? ["joe@webifyplatform.com"]
+    // ? ["joe@webifyplatform.com"]
+    ? ["unigentque11@gmail.com"]
     : ["info@creativeu.live"];
 const ADMINS =
   process.env.NODE_ENV === "development"
-    ? ["joe@webifyplatform.com"]
+    // ? ["joe@webifyplatform.com"]
+    ? ["unigentque11@gmail.com"]
     : ["admin@creativeu.live", "shane@creativeu.live", "linda@creativeu.live"];
 const BASE_URL =
   process.env.NODE_ENV === "development"
